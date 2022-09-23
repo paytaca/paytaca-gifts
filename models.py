@@ -16,14 +16,17 @@ class Gift(Model):
     campaign: fields.ForeignKeyRelation[Campaign] = fields.ForeignKeyField(
         "models.Campaign", related_name="gifts", to_field="id", null=True
     )
-    wallets: fields.ManyToManyRelation["Wallet"] = fields.ManyToManyField(
-        "models.Wallet", related_name="gifts", through="gift_wallet"
-    )
+    claims: fields.ReverseRelation["claim"]
 
     def __str__(self):
         return str(self.id)
 
-class Wallet(Model):
-    wallet_hash = fields.CharField(pk=True, max_length=64)
-    
-    gifts: fields.ManyToManyRelation[Gift]
+class Claim(Model):
+    id = fields.UUIDField(pk=True)
+    wallet_hash = fields.CharField(max_length=64)
+    gift: fields.ForeignKeyRelation[Gift] = fields.ForeignKeyField(
+        "models.Gift", related_name="claims", to_field="id"
+    )
+
+    def __str__(self):
+        return str(self.id)

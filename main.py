@@ -1,6 +1,6 @@
 import logging
 
-from models import Campaign, Gift
+from models import Campaign, Gift, Claim
 from sanic import Sanic, response, text
 from sanic.exceptions import SanicException
 from uuid import UUID
@@ -28,8 +28,13 @@ async def list_campaigns(request):
     
     if query_args.get("limit"):
         limit = int(query_args.get("limit"))
+    
+    query_resp = None
+    if query_args.get("wallet_hash"):
+        query_resp = await Campaign.filter(gifts__claims__wallet_hash=query_args.get("wallet_hash")).offset(offset).limit(limit)
+    else:
+        query_resp = await Campaign.all().offset(offset).limit(limit)
 
-    query_resp = await Campaign.all().offset(offset).limit(limit)
     campaigns = []
     for campaign in query_resp:
         campaigns.append({
@@ -50,8 +55,13 @@ async def list_gifts(request):
     
     if query_args.get("limit"):
         limit = int(query_args.get("limit"))
+    
+    query_resp = []
+    if query_args.get("wallet_hash"):
+        query_resp = await Gift.filter(claims__wallet_hash=query_args.get("wallet_hash")).offset(offset).limit(limit)
+    else:
+        query_resp = await Gift.all().offset(offset).limit(limit)
 
-    query_resp = await Gift.all().offset(offset).limit(limit)
     gifts = []
     for gift in query_resp:
         await gift.fetch_related("campaign")
@@ -88,11 +98,23 @@ async def create_gift(request):
     gift = await Gift.create(share=share, campaign=campaign)
     return response.json({"gift": str(gift)})
 
-# @app.route("/gifts/<gift_id:uuid>/claim")
-# async def claim_gift(request, gift_id: UUID):
-#     # wallet hash must not have already claimed from this gift
-#     # sh
-#     pass
+@app.route("/gifts/<gift_id:uuid>/claim", methods=["POST"])
+async def claim_gift(request, gift_id: UUID):
+    wallet_hash = request.json["wallet_hash"]
+    gift = await Gift.filter(pk=gift_id).first()
+    if gift is None:
+        raise SanicException("Gift does not exist!", status_code=400)
+    
+    claim = await Claim.filter(wallet_hash=wallet_hash, gift=gift)
+    if len(claim) > 0:
+        raise SanicException("Gift already claimed by this wallet", status_code=400)
+    
+    claim = await Claim.create(wallet_hash=wallet_hash, gift=gift)
+    
+    return response.json({
+        "claim": str(claim)
+    })
+    
 
 register_tortoise(
     app, db_url="sqlite://:memory:", modules={"models": ["models"]}, generate_schemas=True
