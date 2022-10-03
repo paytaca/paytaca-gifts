@@ -1,0 +1,41 @@
+version: "3"
+
+services:
+  backend:
+    build: .
+    image: paytaca-gifts-backend
+    command: [ "supervisord", "-c", "/app/supervisord.conf", "--nodaemon" ]
+    ports:
+      - "8000:8000"
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./:/app
+    depends_on:
+      - redis
+
+  postgres:
+    image: "postgres:11.1-alpine"
+    restart: always
+    environment:
+      POSTGRES_USER: $DATABASE_USER
+      POSTGRES_PASSWORD: $DATABASE_PASSWORD
+      POSTGRES_DB: $DATABASE_NAME
+    expose:
+      - "5432"
+
+  adminer:
+    image: adminer
+    depends_on: 
+      - postgres
+    ports:
+      - 3000:8080
+
+  redis:
+    image: "redis:alpine"
+    restart: always
+
+networks:
+  default:
+    driver: bridge

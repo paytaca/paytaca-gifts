@@ -6,7 +6,7 @@ from sanic_ext.extensions.openapi.definitions import Parameter, Response, Reques
 from uuid import UUID
 
 from utils import doc_schemas
-import models
+from database import models
 
 gifts = Blueprint('Gifts', '/gifts')
 
