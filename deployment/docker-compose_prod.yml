@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  backend:
+    build: .
+    image: paytaca-gifts-backend
+    command: [ "supervisord", "-c", "/app/supervisord.conf", "--nodaemon" ]
+    ports:
+      - "8000:8000"
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./:/app
+
+  nginx:
+    image: nginx:1.13.6-alpine
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
+    restart: always
+
+networks:
+  default:
+    driver: bridge
+ 
