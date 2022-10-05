@@ -4,7 +4,7 @@ services:
   backend:
     build: .
     image: paytaca-gifts-backend
-    command: [ "supervisord", "-c", "/app/supervisord.conf", "--nodaemon" ]
+    command: [ "supervisord", "-c", "supervisord.conf", "--nodaemon" ]
     ports:
       - "8000:8000"
     restart: always
@@ -18,10 +18,8 @@ services:
   postgres:
     image: "postgres:11.1-alpine"
     restart: always
-    environment:
-      POSTGRES_USER: $DATABASE_USER
-      POSTGRES_PASSWORD: $DATABASE_PASSWORD
-      POSTGRES_DB: $DATABASE_NAME
+    env_file:
+      - .env
     expose:
       - "5432"
 

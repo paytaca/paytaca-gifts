@@ -2,7 +2,7 @@ from patchwork.transfers import rsync
 from fabric import task
 
 hosts = [
-    'root@xx.xxx.xxx'  # paytaca-gifts server
+    'root@65.108.219.175'  # paytaca-gifts server
 ]
 
 
@@ -25,20 +25,20 @@ def sync(c):
 
 @task(hosts=hosts)
 def build(c):
-    with c.cd('/root/api'):
-        c.run('docker-compose -p paytaca_gifts -f compose/prod.yml build')
+    with c.cd('/root/paytaca-gifts/deployment'):
+        c.run('docker-compose -p paytaca_gifts -f docker-compose_prod.yml build')
 
 
 @task(hosts=hosts)
 def up(c):
-    with c.cd('/root/api'):
-        c.run('docker-compose -p paytaca_gifts -f compose/prod.yml up -d')
+    with c.cd('/root/paytaca-gifts/deployment'):
+        c.run('docker-compose -p paytaca_gifts -f docker-compose_prod.yml up -d')
 
 
 @task(hosts=hosts)
 def down(c):
-    with c.cd('/root/api'):
-        c.run('docker-compose -p paytaca_gifts -f compose/prod.yml down')
+    with c.cd('/root/paytaca-gifts/deployment'):
+        c.run('docker-compose -p paytaca_gifts -f docker-compose_prod.yml down')
 
 
 @task(hosts=hosts)
@@ -51,5 +51,5 @@ def deploy(c):
 
 @task(hosts=hosts)
 def logs(c):
-    with c.cd('/root/api'):
-        c.run('docker-compose -f compose/prod.yml logs api')
+    with c.cd('/root/paytaca-gifts/deployment'):
+        c.run('docker-compose -f deployment/docker-compose_prod.yml logs backend')

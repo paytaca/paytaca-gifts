@@ -167,3 +167,4 @@ cython_debug/
 
 # Custom
 dump.rdb
+.env_prod

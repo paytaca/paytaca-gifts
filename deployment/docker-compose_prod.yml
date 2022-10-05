@@ -2,25 +2,35 @@ version: "3"
 
 services:
   backend:
-    build: .
+    build:
+      context: ../
     image: paytaca-gifts-backend
-    command: [ "supervisord", "-c", "/app/supervisord.conf", "--nodaemon" ]
+    command: [ "supervisord", "-c", "deployment/supervisord_prod.conf", "--nodaemon" ]
     ports:
       - "8000:8000"
     restart: always
     env_file:
-      - .env
+      - .env_prod
     volumes:
-      - ./:/app
+      - ../:/app
 
-  nginx:
-    image: nginx:1.13.6-alpine
+  postgres:
+    image: "postgres:11.1-alpine"
+    restart: always
+    env_file:
+      - .env_prod
+    expose:
+      - "5432"
+
+  adminer:
+    image: adminer
+    depends_on: 
+      - postgres
     ports:
-      - "80:80"
-    depends_on:
-      - backend
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
+      - 3000:8080
+
+  redis:
+    image: "redis:alpine"
     restart: always
 
 networks:
