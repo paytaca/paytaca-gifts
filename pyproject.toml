@@ -19,7 +19,6 @@ pytest-asyncio = "^0.19.0"
 sanic-ext = "^22.6.3"
 asyncpg = "^0.26.0"
 supervisor = "^4.2.4"
-Sanic-Cors = "^2.1.0"
 
 [build-system]
 requires = ["poetry-core"]
