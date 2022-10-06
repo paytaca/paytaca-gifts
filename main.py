@@ -1,10 +1,13 @@
 from sanic import Sanic, Blueprint
+from sanic_ext import Extend
 from tortoise.contrib.sanic import register_tortoise
 from handlers import api
 import settings
 
 app = Sanic(__name__)
 app.blueprint(api)
+app.config.CORS_ORIGINS = "http://localhost:9000"
+Extend(app)
 
 register_tortoise(
     app,

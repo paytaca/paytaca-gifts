@@ -12,6 +12,8 @@ class Campaign(Model):
 
 class Gift(Model):
     id = fields.UUIDField(pk=True)
+    gift_id = fields.CharField(max_length=70)
+    amount = fields.FloatField(default=0)
     share = fields.CharField(max_length=255)
     campaign: fields.ForeignKeyRelation[Campaign] = fields.ForeignKeyField(
         "models.Campaign", related_name="gifts", to_field="id", null=True

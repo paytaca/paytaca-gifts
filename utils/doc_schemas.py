@@ -1,6 +1,8 @@
 #### payloads
 class CreateGiftPayload:
-    share: int
+    gift_id: str
+    share: str
+    amount: float
     limit_per_wallet: int
 
 class ClaimGiftPayload:
@@ -11,7 +13,7 @@ class CreateGiftResponse:
     gift: str
 
 class ClaimGiftResponse:
-    claim: str
+    share: str
 
 class ListGiftsResponse:
     gifts: [{}]

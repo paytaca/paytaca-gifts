@@ -597,6 +597,18 @@ http3 = ["aioquic"]
 test = ["bandit", "beautifulsoup4", "black", "chardet (>=3.0.0,<4.0.0)", "coverage (==5.3)", "docutils", "flake8", "gunicorn (==20.0.4)", "isort (>=5.0.0)", "mypy (>=0.901,<0.910)", "pygments", "pytest (==6.2.5)", "pytest-benchmark", "pytest-cov", "pytest-sanic", "pytest-sugar", "sanic-testing (>=22.3.0)", "slotscheck (>=0.8.0,<1)", "types-ujson", "uvicorn (<0.15.0)"]
 
 [[package]]
+name = "Sanic-Cors"
+version = "2.1.0"
+description = "A Sanic extension adding a decorator for CORS support. Based on flask-cors by Cory Dolphin."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+packaging = ">=21.3"
+sanic = ">=21.9.3"
+
+[[package]]
 name = "sanic-ext"
 version = "22.6.3"
 description = "Extend your Sanic installation with some core functionality."
@@ -775,7 +787,7 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "5dfafca5af78fc3a480c7993669be86f6115cf7505f386151205cd8117c48b51"
+content-hash = "0055738c85f41171a9f2c22e5f484b22a3191ba83fd161e819d1362199ecceca"
 
 [metadata.files]
 aerich = [
@@ -1145,6 +1157,10 @@ rfc3986 = [
 sanic = [
     {file = "sanic-22.6.2-py3-none-any.whl", hash = "sha256:efc3e19eb8c43836ebfd424cb3efc762880b5e3f8fbc07bc125e6d469243a62c"},
     {file = "sanic-22.6.2.tar.gz", hash = "sha256:0edb346455ab5fba4304288c40af31c394f3503458b835051694f2607979010b"},
+]
+Sanic-Cors = [
+    {file = "Sanic-Cors-2.1.0.tar.gz", hash = "sha256:629d0e2c2ca6f79b98fde0b0f522140d1c97a8d727738b5191ffa074a5b7d52b"},
+    {file = "Sanic_Cors-2.1.0-py2.py3-none-any.whl", hash = "sha256:d126bba3d51a88548e5079d2348f5667e6a67991503cd20973b46da066f43cf4"},
 ]
 sanic-ext = [
     {file = "sanic-ext-22.6.3.tar.gz", hash = "sha256:cfd768251dd4573bdcda6490a656eb661ffc1a25449f0ee03bd1a5fd95e4e6f0"},

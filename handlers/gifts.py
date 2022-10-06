@@ -44,8 +44,8 @@ async def list_gifts(request):
         await gift.fetch_related("campaign")
         campaign = gift.campaign
         gifts.append({
-            "id": str(gift.id),
-            "share": gift.share,
+            "gift_id": str(gift.gift_id),
+            "amount": gift.amount,
             "campaign_id": str(campaign)
         })
 
@@ -62,19 +62,27 @@ async def list_gifts(request):
 )
 async def create_gift(request):
     try:
+        gift_id = request.json["gift_id"]
+    except:
+        raise SanicException("Gift ID is required", status_code=400)
+    try:
         share = request.json["share"]
     except:
         raise SanicException("Gift share is required", status_code=400)
+    try:
+        amount = request.json["amount"]
+    except:
+        raise SanicException("Gift amount is required", status_code=400)
    
     campaign = None
     if "limit_per_wallet" in request.json and request.json["limit_per_wallet"]:
         campaign = await models.Campaign.create(limit_per_wallet=request.json["limit_per_wallet"])
     
-    gift = await models.Gift.create(share=share, campaign=campaign)
+    gift = await models.Gift.create(gift_id=gift_id, amount=amount, share=share, campaign=campaign)
     return json({"gift": str(gift)})
 
 
-@gifts.post("/<gift_id:uuid>/claim", strict_slashes=False)
+@gifts.post("/<gift_id:str>/claim", strict_slashes=False)
 @openapi.definition(
     summary="Claim a Gift record.",
     body=RequestBody({"application/json": doc_schemas.ClaimGiftPayload}, required=True),
@@ -82,9 +90,9 @@ async def create_gift(request):
         Response(status=200, content={"application/json": doc_schemas.ClaimGiftResponse}, description="Returns the id of the Claim record.")
     ]
 )
-async def claim_gift(request, gift_id: UUID):
+async def claim_gift(request, gift_id: str):
     wallet_hash = request.json["wallet_hash"]
-    gift = await models.Gift.filter(pk=gift_id).first()
+    gift = await models.Gift.filter(gift_id=gift_id).first()
     
     if gift is None:
         raise SanicException(
@@ -102,5 +110,5 @@ async def claim_gift(request, gift_id: UUID):
     
     claim = await models.Claim.create(wallet_hash=wallet_hash, gift=gift)
     return json({
-        "claim": str(claim)
+        "share": gift.share
     })
