@@ -7,6 +7,7 @@ from uuid import UUID
 
 from utils import doc_schemas
 from database import models
+from tortoise.functions import Sum
 
 gifts = Blueprint('Gifts', '/gifts')
 
@@ -100,11 +101,16 @@ async def claim_gift(request, gift_id: str):
             status_code=400
         )
     
-    claim_count = await models.Claim.filter(wallet_hash=wallet_hash, gift=gift).count()
+    claims_sum = None
+    if gift.campaign:
+        result = await gift.campaign.claims.filter(wallet_hash=wallet_hash).annotate(
+            claims=Sum('amount')
+        )
+        claims_sum = result['claims__sum'] or 0
 
-    if claim_count > 0:
+    if claims_sum >= gift.campaign.limit_per_wallet:
         raise SanicException(
-            "Gift already claimed by this wallet", 
+            "You have exceeded the limit of gifts to claim for this campaign", 
             status_code=409
         )
     
