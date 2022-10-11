@@ -105,7 +105,7 @@ async def claim_gift(request, gift_id: str):
     if claim_count > 0:
         raise SanicException(
             "Gift already claimed by this wallet", 
-            status_code=400
+            status_code=409
         )
     
     claim = await models.Claim.create(wallet_hash=wallet_hash, gift=gift)
