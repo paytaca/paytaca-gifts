@@ -4,8 +4,9 @@ from sanic.response import json
 from sanic_ext import openapi, validate
 from sanic_ext.extensions.openapi.definitions import Parameter, Response, RequestBody
 from sanic_validation import validate_json
-from sanic.log import logger
+# from sanic.log import logger
 from uuid import UUID
+from datetime import datetime
 
 from utils import doc_schemas
 from database import models
@@ -48,8 +49,10 @@ async def list_gifts(request):
         campaign = gift.campaign
         gifts.append({
             "gift_id": str(gift.gift_id),
+            "date_created": str(gift.date_created),
             "amount": gift.amount,
-            "campaign_id": str(campaign)
+            "campaign_id": str(campaign),
+            "date_claimed": str(gift.date_claimed)
         })
 
     return json({"gifts": gifts})
@@ -103,15 +106,20 @@ async def create_gift(request):
 async def claim_gift(request, gift_id: str):
     wallet_hash = request.json["wallet_hash"]
     gift = await models.Gift.filter(gift_id=gift_id).first()
-    
     if gift is None:
         raise SanicException(
             "Gift does not exist!", 
             status_code=400
         )
 
-    await gift.fetch_related('campaign')
+    claim = await models.Claim.filter(gift=gift.id, wallet_hash=wallet_hash).first()
+    if claim:
+        return json({
+            "share": gift.share,
+            "claim_id": str(claim.id)
+        })
 
+    await gift.fetch_related('campaign')
     if gift.campaign:
         await gift.campaign.fetch_related('claims')
         claims = gift.campaign.claims
@@ -142,8 +150,15 @@ async def claim_gift(request, gift_id: str):
             amount=gift.amount,
             gift=gift
         )
-    
-    return json({
-        "share": gift.share,
-        "claim_id": str(claim.id)
-    })
+
+    if claim:
+        await models.Gift.filter(id=gift.id).update(date_claimed=datetime.now())
+        return json({
+            "share": gift.share,
+            "claim_id": str(claim.id)
+        })
+    else:
+        raise SanicException(
+            "This gift has been claimed", 
+            status_code=409
+        )

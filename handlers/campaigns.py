@@ -47,6 +47,7 @@ async def list_campaigns(request):
         await campaign.fetch_related('claims')
         campaigns.append({
             "id": str(campaign.id),
+            "date_created": str(campaign.date_created),
             "name": campaign.name,
             "limit_per_wallet": campaign.limit_per_wallet,
             "gifts": len(campaign.gifts),
