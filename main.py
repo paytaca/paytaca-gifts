@@ -6,7 +6,7 @@ import settings
 
 app = Sanic(__name__)
 app.blueprint(api)
-app.config.CORS_ORIGINS = "http://localhost:9000"
+app.config.CORS_ORIGINS = "*"
 Extend(app)
 
 register_tortoise(
