@@ -14,6 +14,7 @@ class CreateGiftResponse:
 
 class ClaimGiftResponse:
     share: str
+    claim_id: str
 
 class ListGiftsResponse:
     gifts: [{}]

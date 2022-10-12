@@ -4,6 +4,7 @@ from sanic.response import json
 from sanic_ext import openapi, validate
 from sanic_ext.extensions.openapi.definitions import Parameter, Response, RequestBody
 from sanic_validation import validate_json
+from sanic.log import logger
 from uuid import UUID
 
 from utils import doc_schemas
@@ -78,7 +79,7 @@ async def create_gift(request):
             name = data["campaign"]["name"]
             campaign = await models.Campaign.create(name=name, limit_per_wallet=limit)
         elif "id" in data["campaign"]:
-            campaign = await models.Campaign.get(data["campaign"]["id"])
+            campaign = await models.Campaign.get(id=data["campaign"]["id"])
     else:
         campaign = None
     
@@ -108,21 +109,41 @@ async def claim_gift(request, gift_id: str):
             "Gift does not exist!", 
             status_code=400
         )
-    
-    claims_sum = None
-    if gift.campaign:
-        result = await gift.campaign.claims.filter(wallet_hash=wallet_hash).annotate(
-            claims=Sum('amount')
-        )
-        claims_sum = result['claims__sum'] or 0
 
-    if claims_sum >= gift.campaign.limit_per_wallet:
-        raise SanicException(
-            "You have exceeded the limit of gifts to claim for this campaign", 
-            status_code=409
+    await gift.fetch_related('campaign')
+
+    if gift.campaign:
+        await gift.campaign.fetch_related('claims')
+        claims = gift.campaign.claims
+        claims_sum = 0
+        if len(claims) > 0:
+            result = await models.Claim.filter(
+                campaign=gift.campaign,
+                wallet_hash=wallet_hash
+            ).annotate(
+                claims_sum=Sum("amount")
+            ).values('claims_sum')
+            claims_sum = result[0]['claims_sum']
+        if claims_sum < gift.campaign.limit_per_wallet:
+            claim = await models.Claim.create(
+                wallet_hash=wallet_hash,
+                amount=gift.amount,
+                gift=gift,
+                campaign=gift.campaign
+            )
+        else:
+            raise SanicException(
+                "You have exceeded the limit of gifts to claim for this campaign", 
+                status_code=409
+            )
+    else:
+        claim = await models.Claim.create(
+            wallet_hash=wallet_hash,
+            amount=gift.amount,
+            gift=gift
         )
     
-    claim = await models.Claim.create(wallet_hash=wallet_hash, gift=gift)
     return json({
-        "share": gift.share
+        "share": gift.share,
+        "claim_id": str(claim.id)
     })

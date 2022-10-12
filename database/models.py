@@ -38,5 +38,8 @@ class Claim(Model):
         "models.Campaign", related_name="claims", to_field="id", null=True
     )
 
+    class Meta:
+        unique_together = ('wallet_hash', 'gift_id')
+
     def __str__(self):
         return str(self.id)

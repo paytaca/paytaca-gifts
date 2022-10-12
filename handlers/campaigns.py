@@ -3,6 +3,7 @@ from sanic.blueprints import Blueprint
 from sanic.response import json
 from sanic_ext import openapi
 from sanic_ext.extensions.openapi.definitions import Parameter, Response, RequestBody
+# from sanic.log import logger
 from uuid import UUID
 
 from utils import doc_schemas
@@ -42,10 +43,14 @@ async def list_campaigns(request):
 
     campaigns = []
     for campaign in query_resp:
+        await campaign.fetch_related('gifts')
+        await campaign.fetch_related('claims')
         campaigns.append({
             "id": str(campaign.id),
             "name": campaign.name,
             "limit_per_wallet": campaign.limit_per_wallet,
+            "gifts": len(campaign.gifts),
+            "claims": len(campaign.claims)
         })
 
     return json({"campaigns": campaigns})
