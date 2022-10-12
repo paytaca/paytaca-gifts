@@ -1,8 +1,9 @@
 from sanic.exceptions import SanicException
 from sanic.blueprints import Blueprint
 from sanic.response import json
-from sanic_ext import openapi
+from sanic_ext import openapi, validate
 from sanic_ext.extensions.openapi.definitions import Parameter, Response, RequestBody
+from sanic_validation import validate_json
 from uuid import UUID
 
 from utils import doc_schemas
@@ -61,25 +62,32 @@ async def list_gifts(request):
         Response(status=200, content={"application/json": doc_schemas.CreateGiftResponse}, description="Returns the id of the created Gift record")
     ]
 )
+@validate_json(
+    {
+        "gift_id": { "type": "string", "required": True },
+        "share": { "type": "string", "required": True },
+        "amount": { "type": "float", "required": True },
+        "campaign": { "type": "dict", "required": False }
+    }
+)
 async def create_gift(request):
-    try:
-        gift_id = request.json["gift_id"]
-    except:
-        raise SanicException("Gift ID is required", status_code=400)
-    try:
-        share = request.json["share"]
-    except:
-        raise SanicException("Gift share is required", status_code=400)
-    try:
-        amount = request.json["amount"]
-    except:
-        raise SanicException("Gift amount is required", status_code=400)
-   
-    campaign = None
-    if "limit_per_wallet" in request.json and request.json["limit_per_wallet"]:
-        campaign = await models.Campaign.create(limit_per_wallet=request.json["limit_per_wallet"])
+    data = request.json
+    if "campaign" in data:
+        if "limit_per_wallet" in data["campaign"]:
+            limit = data["campaign"]["limit_per_wallet"]
+            name = data["campaign"]["name"]
+            campaign = await models.Campaign.create(name=name, limit_per_wallet=limit)
+        elif "id" in data["campaign"]:
+            campaign = await models.Campaign.get(data["campaign"]["id"])
+    else:
+        campaign = None
     
-    gift = await models.Gift.create(gift_id=gift_id, amount=amount, share=share, campaign=campaign)
+    gift = await models.Gift.create(
+        gift_id=data["gift_id"],
+        amount=data["amount"],
+        share=data["share"],
+        campaign=campaign
+    )
     return json({"gift": str(gift)})
 
 

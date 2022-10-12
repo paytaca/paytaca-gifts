@@ -3,7 +3,7 @@ class CreateGiftPayload:
     gift_id: str
     share: str
     amount: float
-    limit_per_wallet: int
+    campaign: {}
 
 class ClaimGiftPayload:
     wallet_hash: str

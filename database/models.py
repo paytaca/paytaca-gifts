@@ -3,7 +3,8 @@ from tortoise.models import Model
 
 class Campaign(Model):
     id = fields.UUIDField(pk=True)
-    limit_per_wallet = fields.IntField()
+    name = fields.CharField(max_length=50)
+    limit_per_wallet = fields.FloatField()
 
     gifts: fields.ReverseRelation["Gift"]
     claims: fields.ReverseRelation["Claim"]

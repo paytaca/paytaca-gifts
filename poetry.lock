@@ -159,6 +159,17 @@ zookeeper = ["kazoo (>=1.3.1)"]
 zstd = ["zstandard"]
 
 [[package]]
+name = "Cerberus"
+version = "1.3.4"
+description = "Lightweight, extensible schema and data validation tool for Python dictionaries."
+category = "main"
+optional = false
+python-versions = ">=2.7"
+
+[package.dependencies]
+setuptools = "*"
+
+[[package]]
 name = "certifi"
 version = "2022.9.24"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -631,6 +642,18 @@ python-versions = "*"
 httpx = ">=0.18,<0.24"
 
 [[package]]
+name = "sanic-validation"
+version = "0.5.1"
+description = "Validation for sanic endpoints"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+cerberus = "*"
+sanic = ">=19.3"
+
+[[package]]
 name = "setuptools"
 version = "65.4.1"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
@@ -775,7 +798,7 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "5dfafca5af78fc3a480c7993669be86f6115cf7505f386151205cd8117c48b51"
+content-hash = "7a140c7bd52dfb4539e2627b8ef7eb35de219a8194e556dd55400d18e3fc47cd"
 
 [metadata.files]
 aerich = [
@@ -841,6 +864,9 @@ billiard = [
 celery = [
     {file = "celery-5.2.7-py3-none-any.whl", hash = "sha256:138420c020cd58d6707e6257b6beda91fd39af7afde5d36c6334d175302c0e14"},
     {file = "celery-5.2.7.tar.gz", hash = "sha256:fafbd82934d30f8a004f81e8f7a062e31413a23d444be8ee3326553915958c6d"},
+]
+Cerberus = [
+    {file = "Cerberus-1.3.4.tar.gz", hash = "sha256:d1b21b3954b2498d9a79edf16b3170a3ac1021df88d197dc2ce5928ba519237c"},
 ]
 certifi = [
     {file = "certifi-2022.9.24-py3-none-any.whl", hash = "sha256:90c1a32f1d68f940488354e36370f6cca89f0f106db09518524c88d6ed83f382"},
@@ -1157,6 +1183,9 @@ sanic-routing = [
 sanic-testing = [
     {file = "sanic-testing-22.9.0.tar.gz", hash = "sha256:465367ef93b901e04846654936600cb668257548fd0b1867ad00fb5dee7912c2"},
     {file = "sanic_testing-22.9.0-py3-none-any.whl", hash = "sha256:d62a98f37604b4232885574caa7e5f7e412caa57f8adb4ecab8225349838ef07"},
+]
+sanic-validation = [
+    {file = "sanic-validation-0.5.1.tar.gz", hash = "sha256:0f8b5dbd9c47a4593d9d3028e427d9cc3e46944ca8306c2d33d125cdbef44c5e"},
 ]
 setuptools = [
     {file = "setuptools-65.4.1-py3-none-any.whl", hash = "sha256:1b6bdc6161661409c5f21508763dc63ab20a9ac2f8ba20029aaaa7fdb9118012"},

@@ -44,6 +44,7 @@ async def list_campaigns(request):
     for campaign in query_resp:
         campaigns.append({
             "id": str(campaign.id),
+            "name": campaign.name,
             "limit_per_wallet": campaign.limit_per_wallet,
         })
 
