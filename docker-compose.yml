@@ -1,25 +1,13 @@
 version: "3"
 
 services:
-  backend:
-    build: .
-    image: paytaca-gifts-backend
-    command: [ "supervisord", "-c", "supervisord.conf", "--nodaemon" ]
-    ports:
-      - "8000:8000"
-    restart: always
-    env_file:
-      - .env
-    volumes:
-      - ./:/app
-    depends_on:
-      - redis
-
   postgres:
     image: "postgres:11.1-alpine"
     restart: always
     env_file:
       - .env
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
     expose:
       - "5432"
 
@@ -33,6 +21,21 @@ services:
   redis:
     image: "redis:alpine"
     restart: always
+
+  backend:
+    build: .
+    image: paytaca-gifts-backend
+    command: [ "supervisord", "-c", "supervisord.conf", "--nodaemon" ]
+    ports:
+      - "8000:8000"
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./:/app
+    depends_on:
+      - redis
+      - postgres
 
 networks:
   default:

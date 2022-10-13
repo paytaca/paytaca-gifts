@@ -18,7 +18,8 @@ def sync(c):
             './static',
             '.DS_Store',
             '.env',
-            '__pycache__'
+            '__pycache__',
+            './postgres-data'
         ]
     )
 

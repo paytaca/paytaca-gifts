@@ -168,3 +168,5 @@ cython_debug/
 # Custom
 dump.rdb
 .env_prod
+/postgres-data
+supervisord.pid
