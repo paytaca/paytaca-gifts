@@ -32,10 +32,11 @@ class Campaign(Model):
 class Gift(Model):
     id = fields.UUIDField(pk=True)
     date_created = fields.DatetimeField(auto_now_add=True)
-    gift_id = fields.CharField(max_length=70, index=True, unique=True)
+    gift_code_hash = fields.CharField(max_length=70, index=True, unique=True)
     address = fields.CharField(max_length=64)
     amount = fields.FloatField(default=0)
     share = fields.CharField(max_length=255)
+    date_funded = fields.DatetimeField(null=True)
     date_claimed = fields.DatetimeField(null=True)
 
     wallet: fields.ForeignKeyRelation[Wallet] = fields.ForeignKeyField(

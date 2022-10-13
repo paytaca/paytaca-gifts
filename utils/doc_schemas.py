@@ -1,6 +1,7 @@
 #### payloads
 class CreateGiftPayload:
-    gift_id: str
+    gift_code_hash: str
+    address: str
     share: str
     amount: float
     campaign: {}

@@ -11,19 +11,18 @@ from database import models
 
 campaigns = Blueprint('Campaigns', '/campaigns')
 
-@campaigns.get("/list", strict_slashes=False)
+@campaigns.get("/<wallet_hash:str>/list", strict_slashes=False)
 @openapi.definition(
     summary="Fetches a list of Campaigns filtered by wallet hash with pagination.",
     parameter=[
         Parameter("offset", int, "query"),
-        Parameter("limit", int, "query"),
-        Parameter("wallet_hash", str, "query"),
+        Parameter("limit", int, "query")
     ],
     response=[
         Response(status=200, content={"application/json": doc_schemas.ListCampaignsResponse}, description="Returns a list of Campaign objects")
     ]
 )
-async def list_campaigns(request):
+async def list_campaigns(request, wallet_hash: str):
     """Fetches a list of Campaigns filtered by wallet hash with pagination"""
     offset = 0 
     limit = 0
@@ -35,11 +34,7 @@ async def list_campaigns(request):
     if query_args.get("limit"):
         limit = int(query_args.get("limit"))
     
-    query_resp = None
-    if query_args.get("wallet_hash"):
-        query_resp = await models.Campaign.filter(gifts__claims__wallet_hash=query_args.get("wallet_hash")).offset(offset).limit(limit)
-    else:
-        query_resp = await models.Campaign.all().offset(offset).limit(limit)
+    query_resp = await models.Campaign.filter(wallet__wallet_hash=wallet_hash).offset(offset).limit(limit)
 
     campaigns = []
     for campaign in query_resp:
@@ -55,21 +50,3 @@ async def list_campaigns(request):
         })
 
     return json({"campaigns": campaigns})
-
-# @openapi.definition(
-#     summary="Creates a Campaign.",
-#     body=RequestBody({"application/json": doc_schemas.CreateCampaignPayload}, required=True),
-#     response=[
-#         Response(status=200, content={"application/json": doc_schemas.CreateCampaignResponse}, description="Returns a list of Campaign objects")
-#     ]
-# )
-# @campaigns.post("/create", strict_slashes=False)
-# async def create_campaign(request):
-#     """Creates a new Campaign record"""
-#     try:
-#         limit_per_wallet = request.json["limit_per_wallet"]
-#     except:
-#         raise SanicException("Limit per wallet required", status_code=400)
-
-#     campaign = await Campaign.create(limit_per_wallet=limit_per_wallet)
-#     return json({"campaign": str(campaign)})
