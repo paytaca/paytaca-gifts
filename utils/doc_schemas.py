@@ -9,6 +9,9 @@ class CreateGiftPayload:
 class ClaimGiftPayload:
     wallet_hash: str
 
+class RecoverGiftPayload:
+    wallet_hash: str
+
 #### responses
 class CreateGiftResponse:
     gift: str
@@ -16,6 +19,9 @@ class CreateGiftResponse:
 class ClaimGiftResponse:
     share: str
     claim_id: str
+
+class RecoverGiftResponse:
+    share: str
 
 class ListGiftsResponse:
     gifts: [{}]

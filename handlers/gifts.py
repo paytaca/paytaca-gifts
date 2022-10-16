@@ -99,7 +99,7 @@ async def create_gift(request, wallet_hash: str):
     summary="Claim a Gift record.",
     body=RequestBody({"application/json": doc_schemas.ClaimGiftPayload}, required=True),
     response=[
-        Response(status=200, content={"application/json": doc_schemas.ClaimGiftResponse}, description="Returns the id of the Claim record.")
+        Response(status=200, content={"application/json": doc_schemas.ClaimGiftResponse}, description="Returns the the share and ID of the Claim record.")
     ]
 )
 async def claim_gift(request, gift_code_hash: str):
@@ -162,3 +162,28 @@ async def claim_gift(request, gift_code_hash: str):
             "This gift has been claimed", 
             status_code=409
         )
+
+@gifts.post("/<gift_code_hash:str>/recover", strict_slashes=False)
+@openapi.definition(
+    summary="Recover a Gift record, which deletes this record from the database",
+    body=RequestBody({"application/json": doc_schemas.RecoverGiftPayload}, required=True),
+    response=[
+        Response(status=200, content={"application/json": doc_schemas.RecoverGiftResponse}, description="Returns the share of the deleted gift record.")
+    ]
+)
+async def recover_gift(request, gift_code_hash: str):
+    wallet_hash = request.json["wallet_hash"]
+    wallet, _ = await models.Wallet.get_or_create(wallet_hash=wallet_hash)
+    gift = await models.Gift.filter(wallet=wallet, gift_code_hash=gift_code_hash, date_claimed__isnull=True).first()
+    if gift is None:
+        raise SanicException(
+            "Gift does not exist!", 
+            status_code=400
+        )
+    
+    gift_share = gift.share
+    gift_id = gift.id
+    await gift.delete()
+    return json({
+        "share": gift_share
+    })

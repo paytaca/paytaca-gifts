@@ -15,11 +15,11 @@ def sync(c):
         '/root/paytaca-gifts',
         exclude=[
             '.git',
-            './static',
+            'static',
             '.DS_Store',
             '.env',
             '__pycache__',
-            './postgres-data'
+            'postgres-data'
         ]
     )
 
