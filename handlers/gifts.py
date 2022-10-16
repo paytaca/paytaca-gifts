@@ -127,11 +127,11 @@ async def claim_gift(request, gift_code_hash: str):
         if len(claims) > 0:
             result = await models.Claim.filter(
                 campaign=gift.campaign,
-                wallet_hash=wallet_hash
+                wallet=wallet
             ).annotate(
                 claims_sum=Sum("amount")
             ).values('claims_sum')
-            claims_sum = result[0]['claims_sum']
+            claims_sum = result[0]['claims_sum'] or 0
         if claims_sum < gift.campaign.limit_per_wallet:
             claim = await models.Claim.create(
                 wallet=wallet,
