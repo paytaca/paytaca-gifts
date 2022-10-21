@@ -36,7 +36,7 @@ async def list_gifts(request, wallet_hash: str):
     if query_args.get("limit"):
         limit = int(query_args.get("limit"))
     
-    query_resp = await models.Gift.filter(wallet__wallet_hash=wallet_hash).offset(offset).limit(limit)
+    query_resp = await models.Gift.filter(wallet__wallet_hash=wallet_hash).order_by('-date_created').offset(offset).limit(limit)
 
     gifts = []
     for gift in query_resp:
