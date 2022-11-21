@@ -4,7 +4,7 @@ from tortoise.models import Model
 class Wallet(Model):
     id = fields.UUIDField(pk=True)
     date_created = fields.DatetimeField(auto_now_add=True)
-    wallet_hash = fields.CharField(max_length=64)
+    wallet_hash = fields.CharField(max_length=64, index=True)
 
     campaigns: fields.ReverseRelation["Campaign"]
     gifts: fields.ReverseRelation["Gift"]
