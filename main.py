@@ -9,10 +9,19 @@ app.blueprint(api)
 app.config.CORS_ORIGINS = "*"
 Extend(app)
 
+
+TORTOISE_ORM = {
+    'connections': {
+        'default': settings.DATABASE_URI
+    },
+    'apps': {
+        'models': {"models": ["database.models", "aerich.models"]}
+    }
+}
+
 register_tortoise(
     app,
-    db_url=settings.DATABASE_URI,
-    modules={"models": ["database.models", "aerich.models"]},
+    config=TORTOISE_ORM,
     generate_schemas=True
 )
 

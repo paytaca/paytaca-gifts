@@ -21,6 +21,11 @@ asyncpg = "^0.26.0"
 supervisor = "^4.2.4"
 sanic-validation = "^0.5.1"
 
+
+[tool.aerich]
+tortoise_orm = "main.TORTOISE_ORM"
+location = "./migrations"
+src_folder = "./."
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
