@@ -53,4 +53,4 @@ def deploy(c):
 @task(hosts=hosts)
 def logs(c):
     with c.cd('/root/paytaca-gifts/deployment'):
-        c.run('docker-compose -f deployment/docker-compose_prod.yml logs backend')
+        c.run('docker-compose -f docker-compose_prod.yml logs backend')

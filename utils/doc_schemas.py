@@ -1,4 +1,27 @@
+import typing
+from datetime import datetime
+
 #### payloads
+class LimitOffsetPaginationInfo:
+    count: int
+    limit: int
+    offset: int
+
+class GiftPayload:
+    gift_code_hash: str
+    date_created: datetime
+    amount: float
+    campaign_id: str
+    date_claimed: datetime
+
+class CampaignPayload:
+    id: str
+    date_created: datetime
+    name: str
+    limit_per_wallet: float
+    gifts: int
+    claims: int    
+
 class CreateGiftPayload:
     gift_code_hash: str
     address: str
@@ -24,7 +47,9 @@ class RecoverGiftResponse:
     share: str
 
 class ListGiftsResponse:
-    gifts: [{}]
+    gifts: [GiftPayload]
+    pagination: LimitOffsetPaginationInfo
 
 class ListCampaignsResponse:
-    response: [{}]
+    campaigns: [CampaignPayload]
+    pagination: LimitOffsetPaginationInfo

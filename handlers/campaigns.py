@@ -24,6 +24,7 @@ campaigns = Blueprint('Campaigns', '/campaigns')
 )
 async def list_campaigns(request, wallet_hash: str):
     """Fetches a list of Campaigns filtered by wallet hash with pagination"""
+    count = None
     offset = 0 
     limit = 0
     query_args = request.args
@@ -34,7 +35,9 @@ async def list_campaigns(request, wallet_hash: str):
     if query_args.get("limit"):
         limit = int(query_args.get("limit"))
     
-    query_resp = await models.Campaign.filter(wallet__wallet_hash=wallet_hash).offset(offset).limit(limit)
+    queryset = models.Campaign.filter(wallet__wallet_hash=wallet_hash)
+    count = await queryset.count()
+    query_resp = await queryset.offset(offset).limit(limit)
 
     campaigns = []
     for campaign in query_resp:
@@ -49,4 +52,13 @@ async def list_campaigns(request, wallet_hash: str):
             "claims": len(campaign.claims)
         })
 
-    return json({"campaigns": campaigns})
+    data = dict(
+        campaigns=campaigns,
+        pagination=dict(
+            count=count,
+            offset=offset,
+            limit=limit,
+        ),
+    )
+
+    return json(data)
