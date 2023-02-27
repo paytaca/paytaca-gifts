@@ -18,6 +18,7 @@ gifts = Blueprint('Gifts', '/gifts')
 @openapi.definition(
     summary="Fetches a list of Gifts filtered by wallet hash with pagination.",
     parameter=[
+        Parameter("claimed", bool, "query", allowEmptyValue=True),
         Parameter("offset", int, "query"),
         Parameter("limit", int, "query")
     ],
@@ -26,6 +27,8 @@ gifts = Blueprint('Gifts', '/gifts')
     ]
 )
 async def list_gifts(request, wallet_hash: str):
+    count = None
+    claimed = None
     offset = 0 
     limit = 0
     query_args = request.args
@@ -35,8 +38,18 @@ async def list_gifts(request, wallet_hash: str):
     
     if query_args.get("limit"):
         limit = int(query_args.get("limit"))
-    
-    query_resp = await models.Gift.filter(wallet__wallet_hash=wallet_hash).order_by('-date_created').offset(offset).limit(limit)
+
+    if query_args.get("claimed"):
+        claimed = query_args.get("claimed", None)
+        if claimed is not None:
+            claimed = str(claimed).lower().strip() == "true"
+
+    queryset = models.Gift.filter(wallet__wallet_hash=wallet_hash)
+    if isinstance(claimed, bool):
+        queryset = queryset.filter(date_claimed__isnull = not claimed)
+
+    count = await queryset.count()
+    query_resp = await queryset.order_by('-date_created').offset(offset).limit(limit)
 
     gifts = []
     for gift in query_resp:
@@ -50,7 +63,15 @@ async def list_gifts(request, wallet_hash: str):
             "date_claimed": str(gift.date_claimed)
         })
 
-    return json({"gifts": gifts})
+    data = dict(
+        gifts=gifts,
+        pagination=dict(
+            count=count,
+            offset=offset,
+            limit=limit,
+        ),
+    )
+    return json(data)
 
 
 @gifts.post("/<wallet_hash:str>/create", strict_slashes=False)
