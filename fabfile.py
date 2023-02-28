@@ -19,7 +19,8 @@ def sync(c):
             '.DS_Store',
             '.env',
             '__pycache__',
-            'postgres-data'
+            'postgres-data',
+            'supervisord.pid'
         ]
     )
 

@@ -1,7 +1,8 @@
 from sanic.exceptions import SanicException
 from sanic.blueprints import Blueprint
 from sanic.response import json
-from sanic_ext import openapi, validate
+from sanic import Request
+from sanic_ext import openapi, render
 from sanic_ext.extensions.openapi.definitions import Parameter, Response, RequestBody
 from sanic_validation import validate_json
 # from sanic.log import logger

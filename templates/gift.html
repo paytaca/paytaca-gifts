@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>You received a BCH gift</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    </head>
+
+    <body>
+        <h1>You received a BCH gift</h1>
+        <p><b>Scan the QR code below using your Paytaca app to claim it.</b></p>
+        <div id="qr-code"></div>
+        <p><b>How to scan?</b></p>
+        <ol>
+            <li>Open the Paytaca app</li>
+            <li>Go to Apps</li>
+            <li>Open Gifts</li>
+            <li>Click on Claim Gift button</li>
+            <li>Click on QR scanner icon</li>
+            <li>Scan the QR code above</li>
+        </ol>
+        <p><b>You don't have a Paytaca wallet?</b></p>
+        <p>Download and install from <a href="https://www.paytaca.com" target="_blank">www.paytaca.com</a></p>
+
+        <script type="text/javascript">
+            var qrcode = new QRCode(document.querySelector("#qr-code"), {
+                text: "{{ code }}",
+                width: 250, //default 128
+                height: 250,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        </script>
+    </body>
+</html>
