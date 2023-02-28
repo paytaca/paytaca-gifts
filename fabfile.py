@@ -15,7 +15,6 @@ def sync(c):
         '/root/paytaca-gifts',
         exclude=[
             '.git',
-            'static',
             '.DS_Store',
             '.env',
             '__pycache__',

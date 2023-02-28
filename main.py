@@ -3,6 +3,7 @@ from sanic_ext import Extend, render
 from tortoise.contrib.sanic import register_tortoise
 from handlers import api
 import settings
+import os
 
 app = Sanic(__name__)
 
@@ -15,6 +16,9 @@ app.blueprint(app_association_blueprint)
 app.config.CORS_ORIGINS = "*"
 Extend(app)
 
+current_directory = os.path.dirname(os.path.realpath(__file__))
+static_directory = os.path.join(current_directory, 'static')
+app.static('/static', static_directory, strict_slashes=False)
 
 TORTOISE_ORM = {
     'connections': {
@@ -36,9 +40,13 @@ register_tortoise(
 
 @app.get("/claim")
 async def handler(request: Request):
-    code = request.args.get('code')
+    context = {
+        "code": request.args.get('code'),
+        "title": "You received a BCH gift!",
+        "description": "This link delivers a Bitcoin Cash (BCH) gift you can claim using the Paytaca wallet app."
+    }
     return await render(
-        "gift.html", context={"code": code}, status=200
+        "gift.html", context=context, status=200
     )
 
 
