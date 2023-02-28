@@ -50,7 +50,12 @@ async def list_gifts(request, wallet_hash: str):
         queryset = queryset.filter(date_claimed__isnull = not claimed)
 
     count = await queryset.count()
-    query_resp = await queryset.order_by('-date_created').offset(offset).limit(limit)
+    if offset:
+        queryset = queryset.offset(offset)
+    if limit:
+        queryset = queryset.limit(limit)
+    
+    query_resp = await queryset.order_by('-date_created')
 
     gifts = []
     for gift in query_resp:
