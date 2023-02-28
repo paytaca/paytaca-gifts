@@ -37,7 +37,11 @@ async def list_campaigns(request, wallet_hash: str):
     
     queryset = models.Campaign.filter(wallet__wallet_hash=wallet_hash)
     count = await queryset.count()
-    query_resp = await queryset.offset(offset).limit(limit)
+    if offset:
+        queryset = queryset.offset(offset)
+    if limit:
+        queryset = queryset.limit(limit)
+    query_resp = await queryset.order_by('-date_created')
 
     campaigns = []
     for campaign in query_resp:
