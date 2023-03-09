@@ -2,6 +2,7 @@
 <html lang="en">
     <head>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
 
         <!-- HTML Meta Tags -->
         <title>{{ title }}</title>
@@ -27,26 +28,40 @@
     </head>
 
     <body>
-        <h1>You received a BCH gift</h1>
-        <p><b>Scan the QR code below using your Paytaca app to claim it.</b></p>
-        <div id="qr-code"></div>
-        <p><b>How to claim?</b></p>
-        <ol>
-            <li>Open the Paytaca app</li>
-            <li>Go to Apps</li>
-            <li>Open Gifts</li>
-            <li>Click on Claim Gift button</li>
-            <li>Click on QR scanner icon</li>
-            <li>Scan the QR code above</li>
-        </ol>
-        <p><b>You don't have the Paytaca app?</b></p>
-        <p>Download and install from <a href="https://www.paytaca.com" target="_blank">www.paytaca.com</a></p>
-
+        <div class="md:pt-12 max-w-full md:h-screen md:bg-gray-100">
+            <div class="grid md:grid-cols-6 grid-rows-1 pt-4">
+                <div class="md:col-start-2 md:col-span-4 md:drop-shadow-lg md:rounded-lg bg-white">
+                    <div class="grid gap-2 md:grid-cols-2 grid-rows-1">
+                        <div class="w-fit m-auto md:p-12 md:pb-16" >
+                            <h1 class="text-center text-4xl font-semibold">You have received<br>Bitcoin Cash</h1>
+                            <p class="text-center pt-6">This link delivers a Bitcoin Cash gift. You need to scan the QR code below using Paytaca app in order to claim it.</p>
+                            <div id="qr-code" class="pt-6 w-fit m-auto drop-shadow-md"></div>
+                        </div>
+                        <div class="p-4 md:pt-7">
+                            <div class="md:hidden pt-4 pb-4">
+                                <hr>
+                            </div>
+                            <p class="text-2xl">Claim your gift now</p>
+                            <ol class="pt-3 list-decimal pl-10">
+                                <li>Open the Paytaca app</li>
+                                <li>Click on Apps, on Gifts, and on Claim Gift button</li>
+                                <li>Click on QR scanner icon</li>
+                                <li>Scan the QR image received</li>
+                            </ol>
+                            <p class="text-2xl pt-7">Don't have Paytaca yet?</p>
+                            <p class="pt-3">Download and install from <a href="https://www.paytaca.com" target="_blank">https://www.paytaca.com</a></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="bg-green-200 w-full">
+                </div> -->
+            </div>
+        </div>
         <script type="text/javascript">
             var qrcode = new QRCode(document.querySelector("#qr-code"), {
                 text: "{{ code }}",
-                width: 250, //default 128
-                height: 250,
+                width: 300, //default 128
+                height: 300,
                 colorDark : "#000000",
                 colorLight : "#ffffff",
                 correctLevel : QRCode.CorrectLevel.H
