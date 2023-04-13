@@ -61,11 +61,17 @@ async def list_gifts(request, wallet_hash: str):
     for gift in query_resp:
         await gift.fetch_related("campaign")
         campaign = gift.campaign
+        campaign_id = None
+        campaign_name = None
+        if campaign:
+            campaign_id = str(campaign.id)
+            campaign_name = str(campaign.name)
         gifts.append({
             "gift_code_hash": str(gift.gift_code_hash),
             "date_created": str(gift.date_created),
             "amount": gift.amount,
-            "campaign_id": str(campaign),
+            "campaign_id": campaign_id,
+            "campaign_name": campaign_name,
             "date_claimed": str(gift.date_claimed)
         })
 
