@@ -20,6 +20,7 @@ gifts = Blueprint('Gifts', '/gifts')
     summary="Fetches a list of Gifts filtered by wallet hash with pagination.",
     parameter=[
         Parameter("claimed", bool, "query", allowEmptyValue=True),
+        Parameter("campaign", str, "query"),
         Parameter("offset", int, "query"),
         Parameter("limit", int, "query")
     ],
@@ -30,6 +31,7 @@ gifts = Blueprint('Gifts', '/gifts')
 async def list_gifts(request, wallet_hash: str):
     count = None
     claimed = None
+    campaign_filter = None
     offset = 0 
     limit = 0
     query_args = request.args
@@ -45,9 +47,15 @@ async def list_gifts(request, wallet_hash: str):
         if claimed is not None:
             claimed = str(claimed).lower().strip() == "true"
 
+    if query_args.get("campaign"):
+        campaign_filter = query_args.get("campaign", None)
+
     queryset = models.Gift.filter(wallet__wallet_hash=wallet_hash)
     if isinstance(claimed, bool):
         queryset = queryset.filter(date_claimed__isnull = not claimed)
+
+    if isinstance(campaign_filter, str):
+        queryset = queryset.filter(campaign__id = campaign_filter)
 
     count = await queryset.count()
     if offset:
