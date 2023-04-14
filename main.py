@@ -35,14 +35,35 @@ register_tortoise(
     generate_schemas=True
 )
 
-
 # HTML pages
+from database import models
+import hashlib
+
+
+def generate_gift_code_hash(gift_code):
+    return hashlib.sha256(gift_code.encode()).hexdigest()
+
 
 @app.get("/claim")
 async def handler(request: Request):
+    gift_code = request.args.get('code')
+    gift_code_hash = generate_gift_code_hash(gift_code)
+    gift = await models.Gift.filter(gift_code_hash=gift_code_hash).first()
+    exists = False
+    amount = None
+    claimed = False
+    if gift:
+        exists = True
+        amount = float(gift.amount)
+        if gift.date_claimed:
+            claimed = True
+
     context = {
-        "code": request.args.get('code'),
-        "title": "You received a BCH gift!",
+        "code": gift_code,
+        "exists": exists,
+        "amount": amount,
+        "claimed": claimed,
+        "title": f"This link delivers {amount} BCH gift!",
         "description": "This link delivers a Bitcoin Cash (BCH) gift you can claim using the Paytaca wallet app."
     }
     return await render(
